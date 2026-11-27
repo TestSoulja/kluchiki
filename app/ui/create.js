@@ -54,7 +54,7 @@ export function renderCreate(app, props = {}) {
   const about = el(
     'p',
     { class: 'text about-link' },
-    el('a', { href: './about.html', text: 'Что это и чего нет' }),
+    el('a', { href: './about.html', text: 'О приложении' }),
   );
 
   const passwordId = 'create-password';

@@ -86,6 +86,9 @@ h1 {
 }
 
 .lead-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
   margin: 24px 0 0;
 }
 
@@ -143,6 +146,48 @@ a {
   color: var(--on-accent);
   font: 600 16px/1.2 var(--font-text);
   text-decoration: none;
+}
+
+.button-secondary {
+  border-color: var(--accent);
+  background: none;
+  color: var(--accent);
+}
+
+/* Три кадра 360×760: на узком экране в столбик, на широком — в ряд. */
+.shots {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin: 0 0 16px;
+}
+
+@media (min-width: 600px) {
+  .shots {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.shot {
+  margin: 0;
+  padding: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+}
+
+.shot figcaption {
+  margin-top: 8px;
+  font: 400 14px/1.5 var(--font-text);
+  color: var(--muted);
+  text-align: center;
 }
 
 code {

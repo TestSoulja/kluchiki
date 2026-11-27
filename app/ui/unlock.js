@@ -391,7 +391,7 @@ export function renderUnlock(app, props = {}) {
     el(
       'p',
       { class: 'text about-link' },
-      el('a', { href: './about.html', text: 'Что это и чего нет' }),
+      el('a', { href: './about.html', text: 'О приложении' }),
     ),
   );
   page.append(
