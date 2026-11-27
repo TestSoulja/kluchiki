@@ -6,6 +6,9 @@
 // в адресе публичной страницы сократил бы таймер всем.
 
 export const IDLE_MS = 5 * 60 * 1000;
+// Скрытая вкладка дольше минуты блокирует хранилище: человек ушёл в другое
+// приложение, а вкладка осталась в памяти.
+export const HIDDEN_LOCK_MS = 60 * 1000;
 const MIN_OVERRIDE_MS = 500;
 const MAX_OVERRIDE_MS = 10 * 60 * 1000;
 
@@ -48,4 +51,13 @@ export function nextLockReason(state, policy) {
     if (now - lastActivity >= policy.idleMs) return 'idle';
   }
   return null;
+}
+
+// state: { hiddenAt, now, skip }. Пока экран не блокируется (несохранённый
+// код восстановления), skip=true: уход со вкладки его не потеряет.
+export function hiddenLockReason(state, policy = {}) {
+  if (state.skip) return null;
+  if (state.hiddenAt === null || state.hiddenAt === undefined) return null;
+  const limit = policy.hiddenMs ?? HIDDEN_LOCK_MS;
+  return state.now - state.hiddenAt >= limit ? 'hidden' : null;
 }

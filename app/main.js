@@ -2,7 +2,7 @@
 // и хранилище в IndexedDB. Секреты живут только в памяти вкладки.
 
 import { openDatabase, requestPersistence } from './store-idb.js';
-import { readLockSettings, nextLockReason } from './lib/lock.js';
+import { readLockSettings, nextLockReason, hiddenLockReason } from './lib/lock.js';
 import {
   browserStorage,
   clearSession,
@@ -453,8 +453,27 @@ function checkLock() {
 }
 
 // Скрытая вкладка не тикает: срок проверяется сразу при возвращении.
+// Дольше минуты в фоне — блокировка, даже если 5 минут без ввода ещё не
+// прошли. Экран с несохранённым кодом восстановления не блокируется.
+let hiddenAt = null;
 document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible') checkLock();
+  if (document.visibilityState === 'hidden') {
+    hiddenAt = Date.now();
+    return;
+  }
+  if (document.visibilityState !== 'visible') return;
+  const skip = !app.session || skipAutoLock(app.screen, app.props);
+  const reason = hiddenLockReason({
+    hiddenAt,
+    now: Date.now(),
+    skip,
+  });
+  hiddenAt = null;
+  if (reason) {
+    void app.lock(reason);
+    return;
+  }
+  checkLock();
 });
 
 setInterval(checkLock, 1000);

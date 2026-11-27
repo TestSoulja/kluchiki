@@ -69,7 +69,7 @@ export function renderCreate(app, props = {}) {
   });
   const password = passwordControl.input;
   const repeat = repeatControl.input;
-  const counter = el('p', { class: 'counter', text: '0 / 12' });
+  const counter = el('p', { class: 'counter', text: '12 символов минимум' });
   const passwordError = el('p', { class: 'error', role: 'status', hidden: true });
   const repeatError = el('p', { class: 'error', role: 'status', hidden: true });
   const { input: agree, label: agreeLabel } = checkbox(
@@ -119,10 +119,18 @@ export function renderCreate(app, props = {}) {
     footer,
   );
 
+  let touched = false;
+
   function update() {
     const length = [...password.value].length;
-    counter.textContent = `${length} / 12`;
-    counter.classList.toggle('is-short', length < 12);
+    if (touched) {
+      counter.textContent = `${length} / 12`;
+      counter.classList.toggle('is-short', length < 12);
+    } else {
+      // До первого ввода поле ещё не заполняли: это подсказка, а не ошибка.
+      counter.textContent = '12 символов минимум';
+      counter.classList.remove('is-short');
+    }
     const bothFilled = repeat.value !== '';
     const same = repeat.value === password.value;
     repeatError.hidden = !(bothFilled && !same);
@@ -137,7 +145,15 @@ export function renderCreate(app, props = {}) {
     if (length >= 12) passwordError.hidden = true;
   }
 
-  for (const node of [password, repeat]) node.addEventListener('input', update);
+  repeat.addEventListener('input', update);
+  password.addEventListener('input', () => {
+    touched = true;
+    update();
+  });
+  password.addEventListener('blur', () => {
+    touched = true;
+    update();
+  });
   agree.addEventListener('change', update);
   update();
 

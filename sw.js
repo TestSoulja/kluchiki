@@ -5,7 +5,7 @@
 // Имя кэша — единственный номер версии в приложении. Новый файл в app/
 // обязан попасть в SHELL, иначе tests/guard.test.mjs падает.
 
-const CACHE_NAME = 'kluchiki-shell-7';
+const CACHE_NAME = 'kluchiki-shell-8';
 
 const SHELL = [
   './',
